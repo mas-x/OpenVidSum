@@ -1,5 +1,5 @@
 # OpenVidSum
-Powered by OpenAPI to Summarize YouTube Videos.
+OpenAPI powered web app to summarize YouTube videos.
 
 ## Credits
 [youtube-transcript-api-sharp](https://github.com/jdepoix/youtube-transcript-api)
