@@ -19,6 +19,8 @@ namespace OpenVidSum.Controllers
         public async Task<ViewResult> Index(string videoLink)
         {
             ViewData["SummarizedText"] = await _summarizer.Summarize(videoLink);
+            ViewData["VideoLink"] = videoLink;
+
             return View();
         }
     }

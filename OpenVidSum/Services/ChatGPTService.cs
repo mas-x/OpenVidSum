@@ -21,10 +21,10 @@ namespace OpenVidSum.Services
             {
                 Prompt = prompt,
                 Model = apiModel,
-                Temperature = 0.5,
-                MaxTokens = 100,
+                Temperature = 0.6,
+                MaxTokens = 2000,
                 TopP = 1.0,
-                FrequencyPenalty = 0.0,
+                FrequencyPenalty = 0.25,
                 PresencePenalty = 0.0,
             };
 
