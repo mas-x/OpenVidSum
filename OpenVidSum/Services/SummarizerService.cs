@@ -70,8 +70,6 @@ namespace OpenVidSum.Services
             }
 
             prompts.Add(string.Join(" ", words));
-            //prompts.Insert(0, string.Format("In the next {0} messages, I will send the transcript of YouTube, you have to summarize it concisely. ", prompts.Count));
-
             return prompts.ToArray();
         }
     }

@@ -2,24 +2,16 @@
     <h1 class="display-3">Summarize YouTube Videos</h1>
     <p>Powered by OpenAPI to generate easy to understand video summaries of any YouTube video.</p>
 
-    <form class="form-inline" asp-action="Index" method="post">
+    <form id="frmVideo" class="form-inline" asp-action="Index" method="post">
         <div class="input-group">
-            <input class="form-control form-control-lg" name="videoLink" type="text" value="@(ViewData["Response"] is ResponseViewModel ? ((ResponseViewModel)ViewData["Response"]).VideoLink : "")" placeholder="Enter YouTube Video URL...">
-            <button type="submit" class="btn btn-primary">Summarize</button>
+            <input class="form-control form-control-lg" name="videoLink" type="text" id="txtVideoLink" placeholder="Enter YouTube Video URL...">
+            <button id="btnSummarize" type="submit" class="btn btn-primary" onclick="onSubmit()">Summarize</button>
         </div>
     </form>
 
-    <div class="mt-3">
-        @{
-        if (ViewData.ContainsKey("Response"))
-        {
-            <h2>Summary</h2>
-            @foreach (string response in (ViewData["Response"] as ResponseViewModel).Responses)
-            {
-                <p>@response</p>
-            }
-        }
-    }
-    </div>
-    
+    <div id="videoSummary" class="mt-3" />
+</div>
+
+<div id="spinner" class="d-none justify-content-center" style="display:none">
+    <div class="spinner-border" role="status" />
 </div>

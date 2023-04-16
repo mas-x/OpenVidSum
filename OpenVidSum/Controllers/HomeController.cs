@@ -17,17 +17,16 @@ namespace OpenVidSum.Controllers
         }
 
         [HttpPost]
-        public async Task<ViewResult> Index(string videoLink)
+        public async Task<JsonResult> Index(string videoLink)
         {
             List<string> responses = await _summarizer.Summarize(videoLink);
-
-            ViewData["Response"] = new ResponseViewModel()
+            ResponseViewModel response = new ResponseViewModel()
             {
                 Responses = responses,
                 VideoLink = videoLink
             };
 
-            return View();
+            return new JsonResult(response);
         }
     }
 }
