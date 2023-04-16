@@ -1,5 +1,4 @@
 # OpenVidSum
----
 Powered by OpenAPI to Summarize YouTube Videos.
 ---
 Credits
