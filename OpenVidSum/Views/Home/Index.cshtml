@@ -1,0 +1,20 @@
+﻿<div class="container">
+    <h1 class="display-3">Summarize YouTube Videos</h1>
+    <p>Powered by OpenAPI to generate easy to understand video summaries of any YouTube video.</p>
+
+    <form class="form-inline" asp-action="Index" method="post">
+        <div class="input-group">
+            <input class="form-control form-control-lg" name="videoLink" type="text" placeholder="Enter YouTube Video URL...">
+            <button type="submit" class="btn btn-primary">Summarize</button>
+        </div>
+    </form>
+
+    @{
+        if (ViewData.ContainsKey("SummarizedText"))
+        {
+            <div>
+                <p>@ViewData["SummarizedText"]</p>
+            </div>
+        }
+    }
+</div>
