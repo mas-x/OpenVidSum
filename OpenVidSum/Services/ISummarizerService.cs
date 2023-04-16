@@ -2,6 +2,6 @@
 {
     public interface ISummarizerService
     {
-        Task<string> Summarize(string videoLink);
+        Task<List<string>> Summarize(string videoLink);
     }
 }

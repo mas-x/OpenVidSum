@@ -2,6 +2,6 @@
 {
     public interface IChatGPTService
     {
-        Task<List<string>> GetChatGPTResponse(string prompt);
+        Task<List<string>> GetChatGPTResponse(string[] prompt);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using OpenVidSum.Models;
 using OpenVidSum.Services;
 
 namespace OpenVidSum.Controllers
@@ -18,8 +19,13 @@ namespace OpenVidSum.Controllers
         [HttpPost]
         public async Task<ViewResult> Index(string videoLink)
         {
-            ViewData["SummarizedText"] = await _summarizer.Summarize(videoLink);
-            ViewData["VideoLink"] = videoLink;
+            List<string> responses = await _summarizer.Summarize(videoLink);
+
+            ViewData["Response"] = new ResponseViewModel()
+            {
+                Responses = responses,
+                VideoLink = videoLink
+            };
 
             return View();
         }

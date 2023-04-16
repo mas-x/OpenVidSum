@@ -1,4 +1,6 @@
 ﻿using OpenAI_API;
+using OpenAI_API.Chat;
+using OpenAI_API.Models;
 
 namespace OpenVidSum.Services
 {
@@ -10,32 +12,42 @@ namespace OpenVidSum.Services
             _configuration = configuration;
         }
 
-        public async Task<List<string>> GetChatGPTResponse(string prompt)
+        public async Task<List<string>> GetChatGPTResponse(string[] prompts)
         {
             var apiKey = _configuration.GetSection("AppSettings:GChatAPIKEY").Value;
-            var apiModel = _configuration.GetSection("AppSettings:Model").Value;
-            List<string> rq = new List<string>();
-            string rs = "";
+            List<string> responses = new List<string>();
             OpenAIAPI api = new OpenAIAPI(new APIAuthentication(apiKey));
-            var completionRequest = new OpenAI_API.Completions.CompletionRequest()
+
+            ChatRequest chatRequest = new ChatRequest()
             {
-                Prompt = prompt,
-                Model = apiModel,
-                Temperature = 0.6,
-                MaxTokens = 2000,
-                TopP = 1.0,
-                FrequencyPenalty = 0.25,
-                PresencePenalty = 0.0,
+                Model = Model.ChatGPTTurbo,
+                Temperature = 0.1,
+                MaxTokens = 1000,
             };
 
-            var result = await api.Completions.CreateCompletionsAsync(completionRequest);
-            foreach (var choice in result.Completions)
+            List<ChatMessage> messages = new List<ChatMessage>()
             {
-                rs = choice.Text;
-                rq.Add(choice.Text);
+                new ChatMessage(ChatMessageRole.System, "Summarize concisely the transcript from YouTube video.")
+            };
+
+            foreach (string prompt in prompts)
+            {
+                messages.Add(new ChatMessage(ChatMessageRole.User, prompt));
             }
 
-            return rq;
+            chatRequest.Messages = messages;
+
+            var result = await api.Chat.CreateChatCompletionAsync(chatRequest);
+
+            foreach (var choice in result.Choices)
+            {
+                if (choice.Message.Role == ChatMessageRole.Assistant)
+                {
+                    responses.Add(choice.Message.Content);
+                }
+            }
+
+            return responses;
         }
     }
 }

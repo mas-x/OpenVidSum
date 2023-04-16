@@ -16,29 +16,24 @@ namespace OpenVidSum.Services
             _chatGPTService = chatGPTService;
         }
 
-        public async Task<string> Summarize(string videoLink)
-        {
+        public async Task<List<string>> Summarize(string videoLink)
+        {           
             if (string.IsNullOrEmpty(videoLink))
-                throw new BadHttpRequestException("Invalid Video Link.");
+                return new List<string>();
 
             string transcriptText = ConvertTranscriptToText(_transcriptAPI.GetTranscript(GetVideoID(videoLink)));
 
             if (string.IsNullOrEmpty(transcriptText))
-                throw new BadHttpRequestException("Unable to generate video transcript.");
+                return new List<string>();
 
-            if (transcriptText.Length > 3000)
-                throw new BadHttpRequestException("Transcript length exceeds maximum token limit.");
+            List<string> allResponses = new List<string>();
+            foreach (string prompt in GeneratePrompts(transcriptText))
+            {
+                List<string> responses = await _chatGPTService.GetChatGPTResponse(new string[] { prompt });
+                allResponses.AddRange(responses);
+            }
 
-            List<string> responses = await _chatGPTService.GetChatGPTResponse(GeneratePrompt(transcriptText));
-
-            if (responses.Count == 0)
-                return "";
-
-            StringBuilder responseBuilder = new StringBuilder();
-            foreach (string response in responses)
-                responseBuilder.AppendLine(response);
-
-            return responseBuilder.ToString();
+            return allResponses;
         }
 
         private string ConvertTranscriptToText(IEnumerable<TranscriptItem> transcriptItems)
@@ -63,12 +58,21 @@ namespace OpenVidSum.Services
             return query["v"];
         }
 
-        private string GeneratePrompt(string transcript)
+        private string[] GeneratePrompts(string transcript)
         {
-            if (transcript.Length > 3000)
-                return "";
+            List<string> prompts = new List<string>();
+            string[] words = Regex.Split(transcript, @"\W|_");
+            while (words.Length > 2000)
+            {
+                string prompt = string.Join(" ", words.Take(2000));
+                prompts.Add(prompt);
+                words = words.Skip(2000).ToArray();
+            }
 
-            return $"Generate a short and concise summary for the following video transcript \n{transcript}";
+            prompts.Add(string.Join(" ", words));
+            //prompts.Insert(0, string.Format("In the next {0} messages, I will send the transcript of YouTube, you have to summarize it concisely. ", prompts.Count));
+
+            return prompts.ToArray();
         }
     }
 }
